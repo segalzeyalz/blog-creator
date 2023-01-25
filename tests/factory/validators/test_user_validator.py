@@ -7,6 +7,10 @@ class TestUserValidator(unittest.TestCase):
     def setUp(self):
         self.user_validator = UserValidator()
 
+    def test_validate(self):
+        should_fail = self.user_validator.validate({"email": "lala@la.com", "password": "123456"}, {}, {}, {})
+        self.assertEqual(should_fail, False)
+
     def test_is_valid_email(self):
         should_fail = self.user_validator.is_valid_email('dsdfsdf')
         should_succeed = self.user_validator.is_valid_email('dsdfsdf@abc.com')
