@@ -15,7 +15,7 @@ class AbstractModel:
         try:
             self.validator.validate(entity, self.fields, self.create_required_fields, self.create_optional_fields)
             self.adaptor.adapt(entity)
-            res = self.db.insert_one(entity, self.collection_name)
+            self.db.insert_one(entity, self.collection_name)
             return True
         except Exception as e:
             return False
