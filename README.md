@@ -25,6 +25,10 @@ register the app, please use an email and password
 ### /posts/<post_id> method: PUT
 update metadata about the post - like or dislike
 ### /posts/<post_id> method: PATCH
+Update text and title of a post. please login before
 ### /posts method: GET
+Get all posts
 ### /posts/ method: POST
+Create a post. post should have: title and a text. To do it you should login
 ### /posts/<post_id> method: DELETE
+Delete a post. To do it you should login.
