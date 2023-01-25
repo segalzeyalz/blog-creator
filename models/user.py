@@ -1,9 +1,10 @@
-from model import AbstractModel
+from factory.adapters.adapter import Adapter
+from models.model import AbstractModel
 
 
 class User(AbstractModel):
-    def __init__(self, validator, db):
-        super().__init__(validator, db)
+    def __init__(self, validator, db, user_adapter: Adapter):
+        super().__init__(validator, db, user_adapter)
 
         self.collection_name = 'users'
 

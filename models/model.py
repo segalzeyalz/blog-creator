@@ -1,8 +1,11 @@
+from typing import Tuple
+
+
 class AbstractModel:
     def __init__(self, validator, db, adapter):
         self.validator = validator
         self.db = db
-        self.adaptor = adapter
+        self.adapter = adapter
         self.collection_name = ''
 
         self.fields = {}
@@ -11,24 +14,27 @@ class AbstractModel:
         self.update_required_fields = []
         self.update_optional_fields = []
 
-    def create(self, entity):
+    def create(self, entity) -> Tuple[bool, str]:
         try:
-            self.validator.validate(entity, self.fields, self.create_required_fields, self.create_optional_fields)
-            self.adaptor.adapt(entity)
+            is_validated, validation_msg = self.validator.validate(
+                entity, self.fields, self.create_required_fields, self.create_optional_fields)
+            if not is_validated:
+                return False, "not validated"
+
+            self.adapter.adapt(entity)
             self.db.insert_one(entity, self.collection_name)
-            return True
+            return True, ""
         except Exception as e:
-            return False
+            return False, "failed to proceed the post"
 
-    def find(self, entity):  # find all
-        return self.db.find(entity, self.collection_name)
+    def find(self, entity):
+        return self.db.find(entity)
 
-    def find_by_id(self, id):
-        return self.db.find_by_id(id, self.collection_name)
-
-    def update(self, id, entity):
+    def update(self, query, entity) -> Tuple[bool, str]:
         self.validator.validate(entity, self.fields, self.update_required_fields, self.update_optional_fields)
-        return self.db.update(id, entity, self.collection_name)
+        self.adapter.adapt(entity)
+        self.db.update_one(query, entity, True)
+        return True, ''
 
     def delete(self, id):
-        return self.db.delete(id, self.collection_name)
+        return self.db.delete(id)
