@@ -105,7 +105,7 @@ def edit_post(post_id: str):
     try:
         user = list(user_model.find({'session.uuid': request.headers['sessionId']}))[0]
         expected_author = user["email"]
-        post_model_to_update = list(post_model.find({"author": expected_author, "postId": post_id }))
+        post_model_to_update = list(post_model.find({"author": expected_author, "postId": post_id}))
         if len(post_model_to_update) != 1:
             return jsonify({"message": "This user is not authorised"}), 409
 
@@ -151,5 +151,21 @@ def create_post():
             return make_response(f"post {post_id} created", 201)
 
         return abort(400, f"failed to create the row in db because {error}")
+    except Exception as e:
+        return abort(400, "failed to create the row in db")
+
+
+@app.route("/posts/<post_id>", methods=["DELETE"])
+@login_required
+def delete_post(post_id):
+    try:
+        user = list(user_model.find({'session.uuid': request.headers['sessionId']}))[0]
+        author = user["email"]
+        post_deleted, error = post_model.delete({"author": author, "postId": post_id})
+
+        if post_deleted:
+            return make_response(f"post {post_id} deleted", 201)
+
+        return abort(400, f"failed to delete as the post is not found or not authorised for this user")
     except Exception as e:
         return abort(400, "failed to create the row in db")

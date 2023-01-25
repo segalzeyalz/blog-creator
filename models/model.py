@@ -36,5 +36,9 @@ class AbstractModel:
         self.db.update_one(query, entity, True)
         return True, ''
 
-    def delete(self, id):
-        return self.db.delete(id)
+    def delete(self, query):
+        try:
+            self.db.delete_one(query)
+            return True, ''
+        except Exception as e:
+            return False, 'Failed to delete'

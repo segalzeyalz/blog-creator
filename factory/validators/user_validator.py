@@ -11,11 +11,13 @@ class UserValidator(Validator):
             return False, 'missing fields'
         if len(password) < 8:
             return False, 'short password'
-        if not self._is_valid_email(email):
+        if not self.is_valid_email(email):
             return False, 'invalid email'
         return True, ''
 
     @staticmethod
-    def _is_valid_email(email):
+    def is_valid_email(email):
         regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-        return re.fullmatch(regex, email)
+        if re.search(regex, email):
+            return True
+        return False
