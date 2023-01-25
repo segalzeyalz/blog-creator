@@ -94,6 +94,9 @@ def like_post(post_id: str):
             })
             if blog_post_updated:
                 return make_response(jsonify("updated"), 204)
+
+            # same functionality for comments
+
             return blog_post_updated, why_not
         abort(415, "invalid procedure")
     except Exception as e:
