@@ -87,9 +87,10 @@ def like_post(post_id: str):
         args = request.args
         is_like = args.get('like', None)
         if is_like in ('true', 'false'):
+            user = list(user_model.find({'session.uuid': request.headers['sessionId']}))[0]
+            email = user["email"]
             blog_post_updated, why_not = post_model.update({'postId': post_id}, {
-                # todo: change here to username
-                "$set": {"likes.Canyon_123": is_like == 'true'}
+                "$set": {f"likes.{email}": is_like == 'true'}
             })
             if blog_post_updated:
                 return make_response(jsonify("updated"), 204)
