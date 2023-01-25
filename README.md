@@ -14,5 +14,6 @@ install requirements.txt, then run python run.py
 
 # Tradeoffs made - things we should add
 1. Separation of routes
-2. 
+2. Work with a real WSGI
+3. Dockerize
 
