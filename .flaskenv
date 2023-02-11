@@ -1,0 +1,2 @@
+FLASK_APP=routes
+FLASK_DEBUG=1
