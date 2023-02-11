@@ -1,4 +1,6 @@
-flask
+flask==2.1.2
 pymongo
 passlib
 Werkzeug
+python-dotenv
+gunicorn==20.1.0

@@ -2,6 +2,8 @@ import datetime
 from functools import wraps
 from uuid import uuid4
 from flask import Flask, jsonify, request, abort, make_response
+from werkzeug.exceptions import BadRequest
+
 from factory.adapters.post_adapter import PostAdapter
 from factory.adapters.user_adapter import UserAdapter
 from factory.validators.post_validator import PostValidator
@@ -18,27 +20,6 @@ db = client["blog-app"]
 post_model = Post(PostValidator(), db["posts"], PostAdapter())
 user_validator = UserValidator()
 user_model = User(user_validator, db["users"], UserAdapter())
-
-
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        headers = request.headers
-        session_id = headers['sessionId']
-
-        if session_id is None:
-            return abort(400)
-
-        user = [item for item in user_model.find({'session.uuid': session_id})][0]
-        if not user:
-            return abort(400)
-
-        if user['session']['endTime'] < datetime.datetime.now():
-            return abort(400)
-
-        return f(*args, **kwargs)
-
-    return decorated_function
 
 
 @app.route('/login', methods=["POST"])
@@ -80,8 +61,7 @@ def register():
     return make_response(jsonify("created"), 201)
 
 
-@app.route("/posts/<post_id>", methods=["PUT"])
-@login_required
+@app.route("/posts/<string:post_id>", methods=["PUT"])
 def like_post(post_id: str):
     try:
         args = request.args
@@ -103,8 +83,7 @@ def like_post(post_id: str):
         return abort(404)
 
 
-@app.route("/posts/<post_id>", methods=["PATCH"])
-@login_required
+@app.route("/posts/<string:post_id>", methods=["PATCH"])
 def edit_post(post_id: str):
     try:
         user = list(user_model.find({'session.uuid': request.headers['sessionId']}))[0]
@@ -129,7 +108,6 @@ def edit_post(post_id: str):
 
 
 @app.route("/posts", methods=["GET"])
-@login_required
 def get_posts():
     try:
         raw_posts_data = post_model.find({})
@@ -140,27 +118,31 @@ def get_posts():
 
 
 @app.route("/posts/", methods=["POST"])
-@login_required
 def create_post():
     try:
         data = request.get_json()
         text = data["text"]
         title = data["title"]
         post_id = uuid4().hex
-        user = list(user_model.find({'session.uuid': request.headers['sessionId']}))[0]
-        author = user["email"]
-        post_created, error = post_model.create({"postId": post_id, "text": text, "title": title, "author": author})
+        post_created, error = post_model.create({
+            "postId": post_id,
+            "text": text,
+            "title": title
+        })
 
         if post_created:
             return make_response(f"post {post_id} created", 201)
 
         return abort(400, f"failed to create the row in db because {error}")
+
+    except BadRequest as e:
+        return abort(code=e.code, name=e.name, description=e.description)
+
     except Exception as e:
         return abort(400, "failed to create the row in db")
 
 
-@app.route("/posts/<post_id>", methods=["DELETE"])
-@login_required
+@app.route("/posts/<string:post_id>", methods=["DELETE"])
 def delete_post(post_id):
     try:
         user = list(user_model.find({'session.uuid': request.headers['sessionId']}))[0]
