@@ -1,8 +1,11 @@
 from typing import Tuple
 
+from factory.adapters.adapter import Adapter
+from factory.validators.validator import Validator
+
 
 class AbstractModel:
-    def __init__(self, validator, db, adapter):
+    def __init__(self, validator: Validator, db, adapter: Adapter):
         self.validator = validator
         self.db = db
         self.adapter = adapter

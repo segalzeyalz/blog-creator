@@ -1,4 +1,5 @@
-flask==2.1.2
+flask==2.2.2
+flask-smorest==0.40.0
 pymongo
 passlib
 Werkzeug

@@ -2,7 +2,7 @@ from factory.adapters.adapter import Adapter
 from models.model import AbstractModel
 
 
-class User(AbstractModel):
+class UserModel(AbstractModel):
     def __init__(self, validator, db, user_adapter: Adapter):
         super().__init__(validator, db, user_adapter)
 
