@@ -10,6 +10,7 @@ from factory.validators.post_validator import PostValidator
 from models.post import PostModel
 from db import posts
 from post_extractor import PostExtractor
+from schemas import PostSchema, PostUpdateSchema
 
 post_model = PostModel(PostValidator(), posts, PostAdapter())
 
@@ -27,11 +28,11 @@ class Posts(MethodView):
         except Exception as e:
          return "not found", 404
 
-    def post(self):
+    @blp.arguments(PostSchema)
+    def post(self, post_data):
         try:
-            data = request.get_json()
-            text = data["text"]
-            title = data["title"]
+            text = post_data["text"]
+            title = post_data["title"]
             post_id = uuid.uuid4().hex
             post_created, error = post_model.create({
                 "postId": post_id,
@@ -66,10 +67,11 @@ class Post(MethodView):
     except Exception as e:
         return abort(400, "failed to create the row in db")
 
-   def put(self, post_id: str):
+   @blp.arguments(PostUpdateSchema)
+   def put(self, post_id: str, updated_data):
         try:
-            new_text = request.json.get('text')
-            new_title = request.json.get('title')
+            new_text = updated_data.get('text')
+            new_title = updated_data.get('title')
             update_query = {'$set': {}}
             if new_text:
                 update_query['$set']['text'] = new_text
