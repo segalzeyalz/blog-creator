@@ -7,4 +7,4 @@ class UserAdapter(Adapter):
     @staticmethod
     def adapt(entity):
         entity["email"] = entity["email"].strip()
-        entity["password"] = generate_password_hash(entity["password"])
+        entity["password"] = entity["password"]

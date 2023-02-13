@@ -3,7 +3,16 @@ from factory.adapters.adapter import Adapter
 
 class PostAdapter(Adapter):
     @staticmethod
-    def adapt(entity: dict) -> dict: 
+    def adapt(entity):
+        return {
+            "post_id": entity["postId"],
+            "text": entity["text"],
+            "title": entity["title"],
+            "likes": len(entity.get("likes", []))
+        }
+    
+    @staticmethod
+    def adapt_query(entity: dict) -> dict: 
         mongo_query = {"$set": {}, "$unset": {}}
         if "text" in entity:
            mongo_query["$set"]["text"] = entity["text"].strip()

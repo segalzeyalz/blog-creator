@@ -29,7 +29,7 @@ class PostModel(AbstractModel):
 
     def update(self, query: dict, by_params: dict) -> Tuple[bool, str]:
         try:
-            by_param_update_query = self.adapter.adapt(by_params)
+            by_param_update_query = self.adapter.adapt_query(by_params)
             self.db.update_one(query, by_param_update_query)
             return True, ''
         except Exception as e:

@@ -9,3 +9,7 @@ class PostSchema(Schema):
 class PostUpdateSchema(Schema):
     title = fields.Str()
     text = fields.Str()
+
+class UserSchema(Schema):
+    email = fields.Str(required=True)
+    password = fields.Str(required=True, load_only=True)

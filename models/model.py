@@ -22,7 +22,7 @@ class AbstractModel:
             is_validated, validation_msg = self.validator.validate(
                 entity, self.fields, self.create_required_fields, self.create_optional_fields)
             if not is_validated:
-                return False, "not validated"
+                return False, validation_msg
 
             self.adapter.adapt(entity)
             self.db.insert_one(entity, self.collection_name)
@@ -31,7 +31,7 @@ class AbstractModel:
             return False, "failed to proceed the post"
 
     def find(self, entity):
-        return self.db.find(entity)
+        return [e for e in self.db.find(entity)]
 
     def update(self, query, entity) -> Tuple[bool, str]:
         self.validator.validate(entity, self.fields, self.update_required_fields, self.update_optional_fields)
