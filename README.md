@@ -3,7 +3,7 @@ This project enable you to create blogs, posts , like other blog posts
 
 ## How to run it?
 docker build -t dcoya .
-docker run -p 5000:5000 -t -i dcoya
+docker run -p 5000:5000 -e "GUNICORN_CMD_ARGS=--bind=0.0.0.0:5000 --workers=4" dcoya
 
 ## Rules and checks I added
 1. required fields are inside each request
