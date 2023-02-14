@@ -70,9 +70,6 @@ class Posts(MethodView):
             return make_response(f"Post not created because {error}", 401)
         except BAD_REQUEST as e:
             abort(code=e.code, name=e.name, description=e.description)
-        
-        except KeyError as e:
-           abort(400)
 
         except Exception as e:
          return abort(400, "failed to create the row in db")
