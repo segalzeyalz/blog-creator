@@ -28,8 +28,10 @@ blp = Blueprint("Users", __name__, description="get, update and delete userts")
 @blp.route('/register')
 class UserRegister(MethodView):
 
-    @blp.arguments(UserSchema)
-    def post(self, user_data):
+    @blp.response(201, UserSchema)
+    @blp.arguments(UserSchema, required=True, description="register new user", example={
+        "email": "Email@example.com", "password": "somePa$$word132" })
+    def post(self, user_data: dict):
         users = user_model.find({"email":user_data["email"]})
         if len(users) != 0:
             return {"error_message": "User already exists"}, 400 
